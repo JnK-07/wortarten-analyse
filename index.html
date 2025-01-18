@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wortarten-Analyse</title>
+    <style>
+        .NOUN { color: blue; font-weight: bold; } /* Nomen in Blau */
+        .VERB { color: green; } /* Verben in Grün */
+        .ADJ { color: orange; } /* Adjektive in Orange */
+        .PRON { color: purple; } /* Pronomen in Lila */
+        .DET { color: teal; } /* Artikel in Türkis */
+        .PUNCT { color: gray; } /* Satzzeichen in Grau */
+    </style>
+</head>
+<body>
+    <h1>Wortarten-Analyse</h1>
+    <textarea id="sentence" placeholder="Gib hier deinen Satz ein..."></textarea>
+    <button onclick="analyzeSentence()">Analysieren</button>
+    <div id="result"></div>
+
+    <script>
+        async function analyzeSentence() {
+            const sentence = document.getElementById("sentence").value;
+            const response = await fetch("http://127.0.0.1:5000/analyze", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ sentence })
+            });
+
+            const result = await response.json();
+            const resultDiv = document.getElementById("result");
+            resultDiv.innerHTML = ""; // Lösche vorherige Ergebnisse
+
+            result.forEach(wordObj => {
+                const span = document.createElement("span");
+                span.textContent = wordObj.word + " ";
+                span.className = wordObj.pos; // Setze die CSS-Klasse basierend auf der Wortart
+                resultDiv.appendChild(span);
+            });
+        }
+    </script>
+</body>
+</html>
